@@ -14,12 +14,15 @@ module MoviesHelper
   end
   
   def check_box_helper(field)
-    if(params[:ratings][field.to_s])
-      return true
+    if params[:ratings]
+      if(params[:ratings][field.to_s])
+        return true
+      else
+        return false
+      end
     else
       return false
     end
-  
   end
   
 end

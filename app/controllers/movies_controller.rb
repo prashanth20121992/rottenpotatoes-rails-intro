@@ -13,17 +13,49 @@ class MoviesController < ApplicationController
     
     @all_ratings=['G','PG','PG-13','R']
     @movies = Movie.all
-    if params[:sort].eql? 'title'
-      @movies = @movies.order('title asc')
-    elsif params[:sort].eql? 'release'
-      @movies = @movies.order('release_date asc')
-    end  
     @rating_selected=[]
-    params[:ratings].each do |rating|
-      @rating_selected.push(rating)
-    end
-    if @rating_selected.length != 0
-       @movies = @movies.where(:rating => @rating_selected)
+    if params[:sort] and params[:ratings]
+       session[:sort] = params[:sort]
+       session[:ratings] = params[:ratings]
+       
+      if params[:sort].eql? 'title' 
+        @movies = @movies.order('title asc')
+      elsif params[:sort].eql? 'release' 
+        @movies = @movies.order('release_date asc')
+      end
+      
+      params[:ratings].each do |rating|
+        @rating_selected.push(rating)
+      end
+      @movies = @movies.where(:rating => @rating_selected)
+    elsif !params[:sort] and !params[:ratings]
+      if session[:sort] or session[:ratings]
+        flash.keep
+        redirect_to movies_path(:sort=>session[:sort], :ratings => session[:ratings])
+      end
+      #check if we have :sort and :ratings in the session, use them as params 
+      #with redirect, also keep flash hash
+    elsif !params[:sort] and params[:ratings]
+      #use params[:ratings] here, and check if we can use session[:sort]
+      #redirect with new params, keep flash
+      if session[:sort]
+        flash.keep 
+        redirect_to movies_path(:sort => session[:sort], :ratings => params[:ratings])
+      end
+      params[:ratings].each do |rating|
+        @rating_selected.push(rating)
+      end
+      @movies = @movies.where(:rating => @rating_selected)
+    elsif params[:sort] and !params[:ratings]
+      if session[:ratings]
+        flash.keep 
+        redirect_to movies_path(:sort=>params[:sort], :ratings => session[:ratings])
+      end
+      if params[:sort].eql? 'title' 
+        @movies = @movies.order('title asc')
+      elsif params[:sort].eql? 'release' 
+        @movies = @movies.order('release_date asc')
+      end
     end
   end
 

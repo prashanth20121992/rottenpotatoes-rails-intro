@@ -14,6 +14,9 @@ module MoviesHelper
   end
   
   def check_box_helper(field)
+    if !session[:sort] and !session[:ratings]
+      return true
+    end
     if params[:ratings]
       if(params[:ratings][field.to_s])
         return true

@@ -1,4 +1,5 @@
 module MoviesHelper
+  
   # Checks if a number is odd:
   def oddness(count)
     count.odd? ?  "odd" :  "even"
@@ -11,4 +12,14 @@ module MoviesHelper
       return nil
     end
   end
+  
+  def check_box_helper(field)
+    if(params[:ratings][field.to_s])
+      return true
+    else
+      return false
+    end
+  
+  end
+  
 end

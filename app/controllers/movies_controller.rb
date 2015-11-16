@@ -42,6 +42,7 @@ class MoviesController < ApplicationController
         flash.keep 
         redirect_to movies_path(:sort => session[:sort], :ratings => params[:ratings])
       end
+      session[:ratings] = params[:ratings]
       params[:ratings].each do |rating|
         @rating_selected.push(rating)
       end
@@ -51,6 +52,7 @@ class MoviesController < ApplicationController
         flash.keep 
         redirect_to movies_path(:sort=>params[:sort], :ratings => session[:ratings])
       end
+      session[:sort] = params[:sort]
       if params[:sort].eql? 'title' 
         @movies = @movies.order('title asc')
       elsif params[:sort].eql? 'release' 
